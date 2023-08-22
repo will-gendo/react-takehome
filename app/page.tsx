@@ -3,6 +3,9 @@
 import dynamic from 'next/dynamic'
 import { Suspense } from 'react'
 
+// Import the Prisma database client
+import prisma from '../prisma/prisma.ts'
+
 const Blob = dynamic(() => import('@/components/canvas/Examples').then((mod) => mod.Blob), { ssr: false })
 const Dog = dynamic(() => import('@/components/canvas/Examples').then((mod) => mod.Dog), { ssr: false })
 // Use later in the task, if you'd like
@@ -24,9 +27,28 @@ const View = dynamic(() => import('@/components/canvas/View').then((mod) => mod.
 })
 const Common = dynamic(() => import('@/components/canvas/View').then((mod) => mod.Common), { ssr: false })
 
+function generate() {
+  console.log('Generating image..'); 
+  // 1. Generate an image (could be mocked using pr-generated images for now).
+  // TODO
+  // 2. Add it to the backend database.
+  // TODO
+  // 3. Update the interface.
+  // TODO
+}
+
+function share() {
+  console.log('Sharing image..'); 
+  // 1. Identify the cell that is selected in the grid.
+  // 2. Pull the corresponding image from the database.
+  // 3. Open a sharing interface element that displays the image, alomng with appropriate sharing ccontrols.
+  window.open('http://localhost:3000/posts/','_blank').focus();
+}
+
 export default function Page() {
+
   return (
-    <>
+     <>
       <div className='bg-gray-100'>
         <div className='flex mx-auto w-full flex-col md:flex-row md:w-4/5 md:px-12'>
           <div className='mx-auto flex w-fit items-center'>
@@ -55,25 +77,31 @@ export default function Page() {
         <div className='relative h-48 w-full py-2 sm:w-1/2 md:my-12 pl-8'>
           <h2 className='mb-3 text-3xl font-bold leading-none text-gray-800'>Generate your image!</h2>
           <p className='mb-8 text-gray-600'>
-            Drag, scroll, pinch, and rotate the canvas to frame your image, and then when you're happy, hit generate.
+            Drag, scroll, pinch, and rotate the canvas to frame your image, and then when youre happy, hit generate.
           </p>
-          <div className='border border-blue-400 w-fit p-2 rounded-md hover:cursor-pointer hover:bg-blue-50 text-blue-500'>
-            Generate
+         <div className='border border-blue-400 w-fit p-2 rounded-md hover:cursor-pointer hover:bg-blue-50 text-blue-500'>
+             <button onClick={ () =>  {generate()} }>Generate</button>
           </div>
         </div>
       </div>
+
       <div className='bg-gray-100 p-8'>
         <div className='mx-auto flex w-full flex-col flex-wrap items-center md:flex-row lg:w-4/5'>
           <div className='mx-auto grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-6 gap-4 lg:w-4/5'>
             {(() => {
-              // TODO!
+              // This should pull the 12 most recent (highest timestamp) images from the database and display them in a grid.
               const images = []
               for (let i = 0; i < 12; i++) {
-                images.push(<div className='w-32 h-32 bg-white rounded-md'></div>)
+                // The challenge here is that I don't know how to add dynamic (i.e. derived from variables) IDs in HTML/JS
+                images.push(<div className='w-32 h-32 bg-white rounded-md hover:cursor-pointer hover:bg-blue-50 active:bg-blue-100' id="btn_${i}"></div>)
               }
               return images
             })()}
           </div>
+            <div className='border border-blue-400 w-fit p-2 rounded-md hover:cursor-pointer hover:bg-blue-50 text-blue-500'>
+              {/*When the user clicks the Share button, the ID of the image should be passed to the share() function.*/}
+              <button onClick={ () =>  {share()} }>Share</button>
+            </div>
         </div>
       </div>
     </>
